@@ -3,7 +3,7 @@ library flutter_masked_text;
 import 'package:flutter/material.dart';
 
 class MaskedTextController extends TextEditingController {
-  MaskedTextController({String text, this.mask, Map<String, RegExp> translator})
+  MaskedTextController({String? text, this.mask, Map<String, RegExp>? translator})
       : super(text: text) {
     this.translator = translator ?? MaskedTextController.getDefaultTranslator();
 
@@ -20,9 +20,9 @@ class MaskedTextController extends TextEditingController {
     this.updateText(this.text);
   }
 
-  String mask;
+  String? mask;
 
-  Map<String, RegExp> translator;
+  Map<String, RegExp>? translator;
 
   Function afterChange = (String previous, String next) {};
   Function beforeChange = (String previous, String next) {
@@ -33,7 +33,7 @@ class MaskedTextController extends TextEditingController {
 
   void updateText(String text) {
     if(text != null){
-      this.text = this._applyMask(this.mask, text);
+      this.text = this._applyMask(this.mask!, text);
     }
     else {
       this.text = '';
@@ -53,8 +53,11 @@ class MaskedTextController extends TextEditingController {
 
   void moveCursorToEnd() {
     var text = this._lastUpdatedText;
-    this.selection = new TextSelection.fromPosition(
-        new TextPosition(offset: (text ?? '').length));
+
+    Future.delayed(Duration(milliseconds: 50), () {
+      this.selection = new TextSelection.fromPosition(
+          new TextPosition(offset: text.length));      
+    });
   }
 
   @override
@@ -103,8 +106,8 @@ class MaskedTextController extends TextEditingController {
       }
 
       // apply translator if match
-      if (this.translator.containsKey(maskChar)) {
-        if (this.translator[maskChar].hasMatch(valueChar)) {
+      if (this.translator!.containsKey(maskChar)) {
+        if (this.translator![maskChar]!.hasMatch(valueChar)) {
           result += valueChar;
           maskCharIndex += 1;
         }
@@ -178,8 +181,12 @@ class MoneyMaskedTextController extends TextEditingController {
       this.text = masked;
 
       var cursorPosition = super.text.length - this.rightSymbol.length;
-      this.selection = new TextSelection.fromPosition(
-          new TextPosition(offset: cursorPosition));
+
+      Future.delayed(Duration(milliseconds: 50), () {
+        this.selection = new TextSelection.fromPosition(
+            new TextPosition(offset: cursorPosition));
+      });
+      
     }
   }
 
